@@ -1,0 +1,28 @@
+#%RAML 1.0 
+title: this api gives information about developers
+mediaType:
+- application/json
+/javadevelopers:
+  description: this api  gives information about javadevelopers 
+  get:
+    queryParameters:
+      desig:
+        type: string
+        required: true
+        example: java 
+    responses:
+      200:
+        body:
+          example: !include examples/getjavares.raml
+/mulesoft:
+ description: this api gives information about mulesoftdevelopers
+ post:
+   body:
+     type: !include datatypes/postmulereq.raml
+   responses:
+     200:
+       body:
+         example: !include examples/postmuleres.raml          
+          
+ 
+   

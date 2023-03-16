@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:munit="http://www.mulesoft.org/schema/mule/munit" xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xsi:schemaLocation="
+		http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+		http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+		http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd">
+	<munit:config name="errorhandling-suite.xml" />
+	<munit:test name="post:\mulesoft:application\json:errorhandling-config-test" doc:id="fa01839e-9236-467f-a873-f1c501503cf0" >
+		<munit:behavior >
+			<munit:set-event doc:name="Set Input" doc:id="dc197d3c-5f1b-4aa6-9f32-c28cc3bf8e02" >
+				<munit:payload value="#[output application/json --- readUrl('classpath://postmulesoftapplicationjsonerrorhandlingconfigtest\set-event_payload.dwl')]" encoding="UTF-8" mediaType="application/json" />
+				<munit:attributes value="#[readUrl('classpath://postmulesoftapplicationjsonerrorhandlingconfigtest\set-event_attributes.dwl')]" />
+				<munit:variables >
+					<munit:variable key="outboundHeaders" value="#[readUrl('classpath://postmulesoftapplicationjsonerrorhandlingconfigtest\set-event_variable_.dwl')]" />
+				</munit:variables>
+			</munit:set-event>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to post:\mulesoft:application\json:errorhandling-config" doc:id="24434ce7-fbe6-4fea-8ecb-822eac021d00" name="post:\mulesoft:application\json:errorhandling-config"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert doc:name="Assert payload" doc:id="3de31d0d-0ce2-4369-8fcf-0c0a84d692e3" message="The payload does not match">
+				<munit-tools:that ><![CDATA[#[%dw 2.0
+import postmulesoftapplicationjsonerrorhandlingconfigtest::assert_expression_payload
+---
+assert_expression_payload::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+			</munit-tools:assert>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="get:\javadevelopers:errorhandling-config-test" doc:id="520b3e84-ae96-4c11-9f37-9bbc2447862d" >
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when" doc:id="39f8508a-b755-4870-93f8-3bdf68edaf15" processor="choice">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="e4bd8364-808b-4c27-baad-095d81125d79" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+			</munit-tools:mock-when>
+			<set-variable value="get-java-req-flow" doc:name="Set Variable" doc:id="f81b6042-2d0e-4e5b-bda8-3617f3b89901" variableName="flowName" />
+			<munit:set-event doc:name="Set Input" doc:id="b0a7317d-63fd-43b4-95c9-54f83514ecbe" >
+				<munit:payload value="#[readUrl('classpath://getjavadeveloperserrorhandlingconfigtest\set-event_payload1.dwl')]" encoding="UTF-8" />
+				<munit:attributes value="#[readUrl('classpath://getjavadeveloperserrorhandlingconfigtest\set-event_attributes1.dwl')]" />
+				<munit:variables >
+					<munit:variable key="outboundHeaders" value="#[readUrl('classpath://getjavadeveloperserrorhandlingconfigtest\set-event_variable_1.dwl')]" />
+				</munit:variables>
+			</munit:set-event>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to get:\javadevelopers:errorhandling-config" doc:id="7f1ae6ac-28b7-43e8-8f5f-cc675cbeffbd" name="get:\javadevelopers:errorhandling-config"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert doc:name="Assert payload" doc:id="cf84467e-f6f3-4a3b-a256-8e71ef29172f" message="The payload does not match">
+				<munit-tools:that ><![CDATA[#[%dw 2.0
+import getjavadeveloperserrorhandlingconfigtest::assert_expression_payload3
+---
+assert_expression_payload3::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+			</munit-tools:assert>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="get:\javadevelopers:errorhandling-config-test1" doc:id="b91a3c0a-5cae-4fd4-aeb3-16dff9136bd2" >
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when" doc:id="bd99f48b-e874-4a01-899a-c75fcaf7c6aa" processor="choice">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="e4bd8364-808b-4c27-baad-095d81125d79" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+			</munit-tools:mock-when>
+			<set-variable value="null" doc:name="Set Variable" doc:id="342adf3a-b301-473c-af07-dc816c8d1aca" variableName="flowName"/>
+			<munit-tools:mock-when doc:name="Mock when" doc:id="b7b6100c-36f6-4932-ac2f-bb5a78c8f387" processor="sub-flow">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="2bef0a4e-dc27-451a-b787-db4937a31271" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+			</munit-tools:mock-when>
+			<munit:set-event doc:name="Set Input" doc:id="693efaa3-7540-43f0-9da1-391f88db6f0f" >
+				<munit:payload value="#[readUrl('classpath://getjavadeveloperserrorhandlingconfigtest\set-event_payload1.dwl')]" encoding="UTF-8" />
+				<munit:attributes value="#[readUrl('classpath://getjavadeveloperserrorhandlingconfigtest\set-event_attributes1.dwl')]" />
+				<munit:variables >
+					<munit:variable key="outboundHeaders" value="#[readUrl('classpath://getjavadeveloperserrorhandlingconfigtest\set-event_variable_1.dwl')]" />
+				</munit:variables>
+			</munit:set-event>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to get:\javadevelopers:errorhandling-config" doc:id="aa0218b5-ba88-4fd8-9de6-2e5bfb0a36fc" name="get:\javadevelopers:errorhandling-config"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert doc:name="Assert payload" doc:id="3756cb3f-224b-4f5f-864d-79b83fdf64a2" message="The payload does not match">
+				<munit-tools:that ><![CDATA[#[%dw 2.0
+import getjavadeveloperserrorhandlingconfigtest::assert_expression_payload2
+---
+assert_expression_payload2::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+			</munit-tools:assert>
+		</munit:validation>
+	</munit:test>
+</mule>

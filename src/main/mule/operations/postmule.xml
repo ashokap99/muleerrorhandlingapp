@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<sub-flow name="post-mule-flow" doc:id="407df59d-3979-41b7-80d8-2674fdc4e67d" >
+		<logger level="INFO" doc:name="Logger" doc:id="6230cb15-ce99-4322-bf26-2d026cd4f012" message="operation flow started"/>
+		<ee:transform doc:name="Transform Message" doc:id="b98e8079-1008-4cc3-b06a-145c6210f78c" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	manager: payload.manager 
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="4bdaa399-7c87-41fa-92c1-e3cbbb41f654" message="#[payload]"/>
+		<ee:transform doc:name="Transform Message" doc:id="5d47c104-78f7-41a8-8f76-d867127a8ff2">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+  "mulesoftdevelopers":
+  {
+     "manager": "thirisha",
+     "t.l1": "phani",
+     "t.l2": "chandrakanth"
+     
+  },
+  "freshers":
+   { "muthyam1": "siva",
+     "muthyam2": "ashok"
+   }
+
+  
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="52138381-1a48-441b-a616-c0b716095542" message="#[payload]"/>
+	</sub-flow>
+	<sub-flow name="post-mule-error-flow" doc:id="e6d81df4-113e-42cd-8c71-d9dfdf1e9697" >
+		<logger level="INFO" doc:name="Logger" doc:id="1f5a5501-1e7a-4fa3-829d-173b7dbd79f7" message="operation flow started"/>
+		<ee:transform doc:name="Transform Message" doc:id="216f97dd-8aa0-4f68-89e2-a2557a836417" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	manager: payload.manager 
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="be85d9fc-412e-4864-bb33-1e55dac333de" message="#[payload]"/>
+		<ee:transform doc:name="Transform Message" doc:id="998e00d2-d74a-4c58-9998-681813a96ea5">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+  "mulesoftdevelopers":
+  {
+     "manager": "Thirisha",
+     "t.l1": "phani",
+     "t.l2": "chandrakanth"
+     
+  },
+  "freshers":
+   { "muthyam1": "siva",
+     "muthyam2": "ashok"
+   }
+
+  
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</sub-flow>
+</mule>

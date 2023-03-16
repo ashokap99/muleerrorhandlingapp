@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+	<sub-flow name="get-java-req-err-flow" doc:id="fc79dd0f-d930-4ed7-b45c-0a0755f71a92" >
+		<logger level="INFO" doc:name="Logger" doc:id="f5524dd4-c770-497e-89eb-e80329619e14" message="operationflow started"/>
+		<ee:transform doc:name="Transform Message" doc:id="ffd67239-f9fc-4ad5-8e9b-7d703ff25b1a" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"javadevelopers": {
+		"managers": "thirisha",
+		"t.l1": "phani",
+		"t.l2": "chandrakanth"
+
+	},
+	"freshers": {
+		"muthyam1": "siva",
+		"muthyam2": "ashok"
+	}
+
+
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<set-variable value="#[payload.javadevelopers.manager]" doc:name="Set Variable" doc:id="0d56a45b-4b3f-4cd7-9288-100ecebb75f2" variableName="manager"/>
+		<logger level="INFO" doc:name="Logger" doc:id="8457ccf4-7312-4093-983e-4e40175811e6" message="operation flow ended"/>
+	</sub-flow>
+	<flow name="get-java-req-flow" doc:id="9d332fc4-f50f-4df7-9742-6a2c5a6b88b6" >
+		<logger level="INFO" doc:name="Logger" doc:id="091d1dfe-2d8b-414f-8127-000ebc8592a0" message="operationflow started"/>
+		<ee:transform doc:name="Transform Message" doc:id="d6a5d4fc-78f0-4c92-86c5-8ea57fd2644f" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"javadevelopers": {
+		"managers": "thirisha",
+		"t.l1": "phani",
+		"t.l2": "chandrakanth"
+
+	},
+	"freshers": {
+		"muthyam1": "siva",
+		"muthyam2": "ashok"
+	}
+
+
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<set-variable value="#[payload.javadevelopers.manager]" doc:name="Set Variable" doc:id="8164e217-0eb9-4106-b62f-de175928e892" variableName="manager"/>
+		<logger level="INFO" doc:name="Logger" doc:id="81849968-ca7f-43bc-a7c8-f28329c06b19" message="operation flow ended"/>
+	</flow>
+</mule>

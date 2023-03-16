@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns:jms="http://www.mulesoft.org/schema/mule/jms" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd 
+http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/current/mule-jms.xsd">
+    <http:listener-config name="errorhandling-httpListenerConfig">
+        <http:listener-connection host="0.0.0.0" port="8081" />
+    </http:listener-config>
+    <apikit:config name="errorhandling-config" api="errorhandling.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
+    <http:request-config name="dummy-request-HTTP_Request_configuration" doc:name="HTTP Request configuration" doc:id="869f8d61-838d-4ae1-b423-d09bdd432bca" >
+		<http:request-connection protocol="HTTPS" host="www.lua.org"/>
+	</http:request-config>
+	<flow name="errorhandling-main">
+        <http:listener config-ref="errorhandling-httpListenerConfig" path="/*">
+            <http:response statusCode="#[vars.httpStatus default 200]">
+                <http:headers><![CDATA[#[vars.outboundHeaders default {}]]]></http:headers>
+            </http:response>
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body><![CDATA[#[payload]]]></http:body>
+                <http:headers><![CDATA[#[vars.outboundHeaders default {}]]]></http:headers>
+            </http:error-response>
+        </http:listener>
+        <apikit:router config-ref="errorhandling-config" />
+        <error-handler>
+            <on-error-propagate type="APIKIT:BAD_REQUEST">
+                <ee:transform>
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Bad request"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">400</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:NOT_FOUND">
+                <ee:transform>
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Resource not found"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">404</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:METHOD_NOT_ALLOWED">
+                <ee:transform>
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Method not allowed"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">405</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:NOT_ACCEPTABLE">
+                <ee:transform>
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Not acceptable"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">406</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:UNSUPPORTED_MEDIA_TYPE">
+                <ee:transform>
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Unsupported media type"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">415</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:NOT_IMPLEMENTED">
+                <ee:transform>
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Not Implemented"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">501</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+        </error-handler>
+    </flow>
+    <flow name="errorhandling-console">
+        <http:listener config-ref="errorhandling-httpListenerConfig" path="/console/*">
+            <http:response statusCode="#[vars.httpStatus default 200]">
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+            </http:response>
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body>#[payload]</http:body>
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+            </http:error-response>
+        </http:listener>
+        <apikit:console config-ref="errorhandling-config" />
+        <error-handler>
+            <on-error-propagate type="APIKIT:NOT_FOUND">
+                <ee:transform>
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Resource not found"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">404</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+        </error-handler>
+    </flow>
+	<flow name="get:\javadevelopers:errorhandling-config">
+		<set-variable value="get-java-req-flow" doc:name="flowName" doc:id="55ae4f04-cc78-4410-b8c1-fbb09f5a424a" variableName="flowName"/>
+		<ee:transform doc:name="Transform Message" doc:id="f3f0c9e6-d10b-42d5-bede-6f86df729466">
+			<ee:message>
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="desig" ><![CDATA[attributes.queryParams.desig]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<set-payload value="#[payload]" doc:name="Set Payload" doc:id="f60ddd29-0933-440b-9e89-54d6e938d1e3" />
+		<try doc:name="Try" doc:id="7706c205-37ff-4e9a-b5d9-db717a8d02ce" >
+			<choice doc:name="Choice" doc:id="e4bd8364-808b-4c27-baad-095d81125d79">
+			<when expression='#[vars.desig== "java"]'>
+				<flow-ref doc:name="get-java-req-flow" doc:id="20faa21e-e77b-4319-9f3f-d10c8c696937" name="get-java-req-flow" />
+			</when>
+				<otherwise >
+					<raise-error doc:name="Raise error" doc:id="5a1f1447-ec51-4470-ac4e-a222c3cc6e2f" type="ANY"/>
+				</otherwise>
+		</choice>
+			<error-handler >
+				<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="e7acac0a-b654-4ed4-ba2f-d46c5866fe8a" type="ANY">
+					<flow-ref doc:name="get-java-req-err-flow" doc:id="2586ec3c-c5cd-4f57-8b7b-0c6abca22e73" name="get-java-req-err-flow" />
+				</on-error-continue>
+			</error-handler>
+		</try>
+		<logger level="INFO" doc:name="Logger" doc:id="45da9d91-58ad-4812-826c-a11642e500bb" message="outoff try block"/>
+		<ee:transform doc:name="Transform Message" doc:id="2efd7ad0-a84a-42f0-aa17-fe89b85e4de2" >
+			<ee:message >
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="manager" ><![CDATA[attributes.vars.manager]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="158165bb-027a-42a9-ba50-cbb32dd012f5" message="#[payload]"/>
+    </flow>
+    <flow name="post:\mulesoft:application\json:errorhandling-config">
+		<set-variable value="post-mule-flow" doc:name="post-mule-flow" doc:id="c02fb32a-482c-4588-a9ec-bc9e2f7a2f83" variableName="flowName"/>
+		<try doc:name="Try" doc:id="fb0a0425-5ab7-432f-acf6-6a5f539e901e" >
+			<choice doc:name="Choice" doc:id="7be79207-78d3-4696-931d-bac8f1ade820" >
+				<when expression='#[payload.manager== "thirisha"]'>
+					<flow-ref doc:name="post-mule-flow" doc:id="4cbe241a-ff81-4ac3-bbd9-27767c2171b6" name="post-mule-flow" />
+				</when>
+				<otherwise >
+					<raise-error doc:name="Raise error" doc:id="b1faaa87-69f4-403a-a0b9-9d0baa747d52" type="ANY"/>
+				</otherwise>
+			</choice>
+			<error-handler >
+				<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="3a7de0b1-dd2e-4e46-9caf-f6c6fc03c8f9" type="ANY">
+					<flow-ref doc:name="post-mule-error-flow" doc:id="b5d0d57e-c4fc-489f-ae4e-fe1836097092" name="post-mule-error-flow"/>
+				</on-error-continue>
+			</error-handler>
+		</try>
+		<try doc:name="Try" doc:id="904e6744-2d9b-4873-9f92-6ae5ec07dd89" >
+			<choice doc:name="Choice" doc:id="6fd9617f-9446-4739-b42a-a0c3d9cabe1f" >
+				<when expression='#[payload.mulesoftdevelopers.manager== "thirisha"]'>
+					<http:request method="POST" doc:name="Request" doc:id="91ea4401-880b-480a-a4b0-9e6d3684edb5" config-ref="dummy-request-HTTP_Request_configuration" path="/start.html"/>
+				</when>
+				<otherwise >
+					<raise-error doc:name="Raise error" doc:id="5ce5db5a-9290-4597-a4d5-3f5a3dda2357" type="ANY"/>
+				</otherwise>
+			</choice>
+		</try>
+		<ee:transform doc:name="Transform Message" doc:id="aafc8200-47bb-4bf4-b998-0c6660593d62" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"message": "all is well"
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<error-handler >
+			<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="bdaf2a21-cd27-4954-804b-ddca2b498f76" >
+				<ee:transform doc:name="Transform Message" doc:id="233b7f77-f870-42cc-a7c2-c7f31f378e68" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"errortype": "serer error",
+	"statuscode": "500"
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</on-error-propagate>
+		</error-handler>
+    </flow>
+</mule>
